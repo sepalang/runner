@@ -1,0 +1,28 @@
+{
+  "name": "runner",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "padoc --pack src/index.js dist/index.js -m umd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sepalang/runner.git"
+  },
+  "keywords": [
+    "child_process"
+  ],
+  "author": "AHN HO JUNG",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sepalang/runner/issues"
+  },
+  "homepage": "https://github.com/sepalang/runner#readme",
+  "dependencies": {
+    "pado": "github:sepalang/pado"
+  },
+  "devDependencies": {
+    "padoc": "github:sepalang/padoc"
+  }
+}
