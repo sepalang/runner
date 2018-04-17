@@ -41,12 +41,12 @@ const exec = function exec(commands,options){
     };
     
     const outdata = (data) => {
-      stdout = data;
+      stdout = data.toString();
       allowPrint && process.stdout.write(data);
     };
       
     const errdata = (data) => {
-      stderr = data;
+      stderr = data.toString();
       allowPrint && process.stderr.write(data);
     };
     
