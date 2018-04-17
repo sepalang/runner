@@ -1,20 +1,13 @@
-module.exports.task = function(asyncFn){
-  return Promise
-  .resolve(asyncFn())
-  .catch((e)=>{
-    console.error(e);
-    process.exit(1);
-  })
-  .then(()=>{
-    console.log("finallly");
-    process.exit(0);
-  });
-};
+const path = require("path");
 
-module.exports.exec = function exec(command,path){
+const exec = function exec(command,path){
   new Promise((resolve,reject)=>{
+    const commands =  command.trim().split(/\s/);
+    
     const { spawn } = require("child_process");
-    const app = spawn('node', ['./node_modules/.bin/npm', 'i', 'electron']);
+    const app = spawn(commands.shift(), commands, {
+      
+    });
 
     app.stdout.on('data', (data) => {
       console.log(`${data}`);
@@ -32,5 +25,22 @@ module.exports.exec = function exec(command,path){
         reject(code);
       }
     });
+  });
+};
+
+const test = function(a){
+  return path.resolve(__dirname,a);
+}
+
+module.exports = function(asyncFn){
+  return Promise
+  .resolve(asyncFn({ exec, test, resolver:path.resolve, parser:path.parse }))
+  .catch((e)=>{
+    console.error(e);
+    process.exit(1);
+  })
+  .then(()=>{
+    console.log("finallly");
+    process.exit(0);
   });
 };
