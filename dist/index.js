@@ -1,30 +1,77 @@
+const { spawn } = require("child_process");
 const path = require("path");
 
-const exec = function exec(command,path){
-  new Promise((resolve,reject)=>{
-    const commands =  command.trim().split(/\s/);
+const exec = function exec(commands,options){
+  return new Promise((resolve,reject)=>{
+    const argvs = commands.trim().split(/\s/);
+    const execute = argvs.shift();
     
-    const { spawn } = require("child_process");
-    const app = spawn(commands.shift(), commands, {
+    if(typeof options === "object"){
+      if(options.env){
+        Object.assign({
+          env:process.env,
+          print:true
+        },
+        options,
+        {
+          env:Object.assign(process.env,options.env)
+        })
+      }
+      options = options;
+    } else if(options === "string") {
+      options = {
+        cwd:options,
+        env:process.env,
+        print:true
+      }
+    } else {
+      options = {
+        env:process.env,
+        print:true
+      };
+    }
+    
+    const application = spawn(execute, argvs, options);
+    const allowPrint = options.print !== false;
+    let stdout;
+    let stderr;
+    
+    const indata = (c)=>{
+      application.stdin.write(c);
+    };
+    
+    const outdata = (data) => {
+      stdout = data;
+      allowPrint && process.stdout.write(data);
+    };
       
-    });
-
-    app.stdout.on('data', (data) => {
-      console.log(`${data}`);
-    });
-
-    app.stderr.on('data', (data) => {
-      console.log(`${data}`);
-    });
-
-    app.on('close', (code) => {
-      console.log(`${code}`);
+    const errdata = (data) => {
+      stderr = data;
+      allowPrint && process.stderr.write(data);
+    };
+    
+    //if(allowPrint){
+    //  process.stdin.setRawMode(true);
+    //  process.stdin.on('data', indata);
+    //}
+    application.stdout.on('data', outdata);
+    application.stderr.on('data', errdata);
+    
+    application.on('close', (code) => {
+      //if(allowPrint){
+      //  process.stdin.setRawMode(false);
+      //  process.stdin.removeListener('data', indata);
+      //}
+      application.stdout.removeListener('data', outdata);
+      application.stderr.removeListener('data', errdata);
+      
       if(code === 0){
-        resolve(code);
+        resolve({ code, stdout, stderr });
       } else {
-        reject(code);
+        reject({ code, stdout, stderr });
       }
     });
+    
   });
 };
 
@@ -33,14 +80,16 @@ const test = function(a){
 }
 
 module.exports = function(asyncFn){
+  // console.log("🏃 Runner 🏃")
   return Promise
   .resolve(asyncFn({ exec, test, resolver:path.resolve, parser:path.parse }))
-  .catch((e)=>{
-    console.error(e);
-    process.exit(1);
+  .then(e=>{
+    // console.log("👏 Oh yeah, Running was successful. 👏")
+    return Promise.resolve(e);
   })
-  .then(()=>{
-    console.log("finallly");
-    process.exit(0);
+  .catch(e=>{
+    console.log("💥🏃 Opps, Runner has stopped working.");
+    console.log(e);
+    return Promise.reject(e);
   });
 };

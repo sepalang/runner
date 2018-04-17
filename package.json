@@ -1,10 +1,10 @@
 {
   "name": "runner",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "padoc --pack src/index.js dist/index.js -m umd"
+    "test": "node test/test1.js"
   },
   "repository": {
     "type": "git",
