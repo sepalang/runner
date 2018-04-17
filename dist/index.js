@@ -76,8 +76,8 @@ const exec = function exec(commands,options){
   });
 };
 
-const find = function(relative="./"){
-  return path.resolve(process.argv[1],relative);
+const find = function(relative="."){
+  return !relative || relative === "." ? process.argv[1] : path.resolve(path.resolve(process.argv[1],"../"),relative);
 }
 
 module.exports = function(asyncFn){
