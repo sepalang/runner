@@ -11,7 +11,7 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require('runner'); //or import runner form 'runner';
 
-runner(asnyc ()=>{
+runner(async ()=>{
   await step1();
   
   let result = await step2();
