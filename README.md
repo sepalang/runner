@@ -1,5 +1,5 @@
-# runner
-
+# 🏃 runner
+It was created to make other processes easier.
 
 ### usage
 Run the command from your npm project.
@@ -11,7 +11,7 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require('runner'); //or import runner form 'runner';
 
-runner(async ({ exec })=>{
+runner(async ({ exec, find })=>{
   const { stdout:pwdout } = await exec("pwd");
   const { stdout:lsout } = await exec("ls -a");
   
@@ -26,6 +26,19 @@ runner(async ({ exec })=>{
     ..
     test.js
   */
+  
+  const path1 = find("./");
+  const path2 = find("../");
+  const path3 = find("../../");
+  
+  console.log({path1, path2, path3});
+  /*
+    { 
+      path1: '/Users/user/runner/test/test.js',
+      path2: '/Users/user/runner/test',
+      path3: '/Users/user/runner'
+    }
+  */
 })
 .catch((e)=>{
   // catch block;
@@ -36,5 +49,8 @@ runner(async ({ exec })=>{
   process.exit(0);
 });
 });
+
+```
+
 
 ```

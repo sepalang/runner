@@ -75,14 +75,14 @@ const exec = function exec(commands,options){
   });
 };
 
-const test = function(a){
-  return path.resolve(__dirname,a);
+const find = function(relative="./"){
+  return path.resolve(process.argv[1],relative);
 }
 
 module.exports = function(asyncFn){
   // console.log("🏃 Runner 🏃")
   return Promise
-  .resolve(asyncFn({ exec, test, resolver:path.resolve, parser:path.parse }))
+  .resolve(asyncFn({ exec, find, resolver:path.resolve, parser:path.parse }))
   .then(e=>{
     // console.log("👏 Oh yeah, Running was successful. 👏")
     return Promise.resolve(e);
