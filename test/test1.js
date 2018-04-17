@@ -6,6 +6,7 @@ runner(async ({ exec })=>{
 })
 .catch((e)=>{
   // catch block;
+  console.log("reason\n",e)
   process.exit(1);
 })
 .then(()=>{
