@@ -1,5 +1,5 @@
 # 🏃 runner
-It was created to make other processes easier.
+It was created to make child processes easier.
 
 ### usage
 Run the command from your npm project.
