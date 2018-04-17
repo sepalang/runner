@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sources":["../src/index.js"],"sourcesContent":["import { promise, awaitCompose as compose } from 'pado/dist'\n\nconst spawn = (module, argv)=>{\n  \n}\n\nexport { \n  promise,\n  compose,\n  spawn\n}\n"],"names":["spawn","module","argv"],"mappings":";;;;;;MAEMA,QAAQ,SAARA,KAAQ,CAACC,MAAD,EAASC,IAAT,EAAgB,EAA9B;;;;;;;;;;;;;;"}

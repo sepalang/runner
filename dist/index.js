@@ -49,7 +49,7 @@ const exec = function exec(commands,options){
       stderr = data.toString();
       allowPrint && process.stderr.write(data);
     };
-    
+    //next feature. It still has tmux (stdio) and vim (resize) issues.
     //if(allowPrint){
     //  process.stdin.setRawMode(true);
     //  process.stdin.on('data', indata);
@@ -58,6 +58,7 @@ const exec = function exec(commands,options){
     application.stderr.on('data', errdata);
     
     application.on('close', (code) => {
+      //next feature
       //if(allowPrint){
       //  process.stdin.setRawMode(false);
       //  process.stdin.removeListener('data', indata);
