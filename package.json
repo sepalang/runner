@@ -18,11 +18,5 @@
   "bugs": {
     "url": "https://github.com/sepalang/runner/issues"
   },
-  "homepage": "https://github.com/sepalang/runner#readme",
-  "dependencies": {
-    "pado": "github:sepalang/pado"
-  },
-  "devDependencies": {
-    "padoc": "github:sepalang/padoc"
-  }
+  "homepage": "https://github.com/sepalang/runner#readme"
 }

@@ -1,16 +1,46 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('pado/dist')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'pado/dist'], factory) :
-  (factory((global.module = {}),global.dist));
-}(this, (function (exports,dist) { 'use strict';
+const path = require("path");
 
-  var spawn = function spawn(module, argv) {};
+const exec = function exec(command,path){
+  new Promise((resolve,reject)=>{
+    const commands =  command.trim().split(/\s/);
+    
+    const { spawn } = require("child_process");
+    const app = spawn(commands.shift(), commands, {
+      
+    });
 
-  exports.promise = dist.promise;
-  exports.compose = dist.awaitCompose;
-  exports.spawn = spawn;
+    app.stdout.on('data', (data) => {
+      console.log(`${data}`);
+    });
 
-  Object.defineProperty(exports, '__esModule', { value: true });
+    app.stderr.on('data', (data) => {
+      console.log(`${data}`);
+    });
 
-})));
-//# sourceMappingURL=index.js.map
+    app.on('close', (code) => {
+      console.log(`${code}`);
+      if(code === 0){
+        resolve(code);
+      } else {
+        reject(code);
+      }
+    });
+  });
+};
+
+const test = function(a){
+  return path.resolve(__dirname,a);
+}
+
+module.exports = function(asyncFn){
+  return Promise
+  .resolve(asyncFn({ exec, test, resolver:path.resolve, parser:path.parse }))
+  .catch((e)=>{
+    console.error(e);
+    process.exit(1);
+  })
+  .then(()=>{
+    console.log("finallly");
+    process.exit(0);
+  });
+};
