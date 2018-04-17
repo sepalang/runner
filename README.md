@@ -1,4 +1,3 @@
-<img class="badge-img" src="https://img.shields.io/badge/build-faild-red.svg?longCache=true" alt="red">
 # runner
 
 
@@ -17,9 +16,17 @@ runner(asnyc ()=>{
   
   let result = await step2();
   
-  if(result)
-  await hook(result);
+  if(result){
+    await hook(result);
+  }
+  
+  return await step3();
 })
 .catch(()=>{
-  
+  // catch block;
+  process.exit(1);
 })
+.then(()=>{
+  // finally block
+  process.exit(0);
+});
