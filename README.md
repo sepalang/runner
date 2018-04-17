@@ -12,11 +12,13 @@ Then write an async await function to execute sequentially.
 const runner = require('runner'); //or import runner form 'runner';
 
 runner(async ({ exec, find })=>{
-  const { stdout:pwdout } = await exec("pwd");
-  const { stdout:lsout } = await exec("ls -a");
+  // Sequential execution using await
   
-  console.log("PWD -\n",pwdout);
-  console.log("LS  -\n",lsout);
+  const { stdout:pout } = await exec("pwd");
+  const { stdout:lout } = await exec("ls -a");
+  
+  console.log("PWD -\n",pout);
+  console.log("LS  -\n",lout);
   /*
     PWD -
     /Users/user/runner/test
@@ -26,6 +28,8 @@ runner(async ({ exec, find })=>{
     ..
     test.js
   */
+  
+  // There is always a way to find the path when executing the process. Easy is always good.
   
   const path1 = find("");
   const path2 = find(".");
@@ -52,9 +56,5 @@ runner(async ({ exec, find })=>{
   // finally block
   process.exit(0);
 });
-});
-
-```
-
 
 ```
