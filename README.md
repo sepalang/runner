@@ -11,7 +11,7 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require('runner'); //or import runner form 'runner';
 
-runner(async ({ exec, find })=>{
+runner(async ({ exec, find, timeout })=>{
   // Sequential execution using await
   
   const { stdout:pout } = await exec("pwd");
@@ -47,6 +47,13 @@ runner(async ({ exec, find })=>{
       path5: '/Users/user/runner'
     }
   */
+  
+  //wait 3000ms
+  await timeout(3000);
+  
+  await timeout(()=>{
+    //wait 3000ms
+  },3000);
 })
 .catch((e)=>{
   // catch block;

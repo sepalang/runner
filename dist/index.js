@@ -80,10 +80,18 @@ const find = function(relative="."){
   return !relative || relative === "." ? process.argv[1] : path.resolve(path.resolve(process.argv[1],"../"),relative);
 }
 
+const timeout = function (fn, time) {
+  if (typeof fn === "number") {
+    return new Promise((resolve)=>setTimeout(()=>resolve(time), fn));
+  } else {
+    return new Promise((resolve)=>setTimeout(()=>resolve(typeof fn === "function" ? fn() : fn), time));
+  }
+}
+
 module.exports = function(asyncFn){
   // console.log("🏃 Runner 🏃")
   return Promise
-  .resolve(asyncFn({ exec, find, resolver:path.resolve, parser:path.parse }))
+  .resolve(asyncFn({ exec, find, timeout, pathResolve:path.resolve, pathParase:path.parse }))
   .then(e=>{
     // console.log("👏 Oh yeah, Running was successful. 👏")
     return Promise.resolve(e);
