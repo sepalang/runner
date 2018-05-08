@@ -1,7 +1,7 @@
 {
-  "name": "runner",
-  "version": "0.3.1",
-  "description": "",
+  "name": "@sepalang/runner",
+  "version": "0.4.1",
+  "description": "It was created to make child processes easier.",
   "main": "dist/index.js",
   "scripts": {
     "test": "node test/test1.js"
@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/sepalang/runner/issues"
   },
-  "homepage": "https://github.com/sepalang/runner#readme"
+  "homepage": "https://github.com/sepalang/runner#readme",
+  "dependencies": {
+    "cross-spawn": "^6.0.5"
+  },
+  "devDependencies": {}
 }
