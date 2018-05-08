@@ -16,21 +16,17 @@ runner(async ({ exec, find, timeout })=>{
   
   
   await exec("pwd");
-  await exec("cd ../ && pwd");
   /*
     /Users/user/runner/test
   */
-  { stdout } = ;
-  console.log(stdout);
   
   
-  { stdout } = await exec("pwd");
+  { stdout } = await exec("pwd",{ print:false });
   
   console.log(stdout);
   /*
     /Users/user/runner/test
   */
-  
   
   
   // There is always a way to find the path when executing the process. Easy is always good.
