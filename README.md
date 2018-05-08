@@ -14,20 +14,24 @@ const runner = require('runner'); //or import runner form 'runner';
 runner(async ({ exec, find, timeout })=>{
   // Sequential execution using await
   
-  const { stdout:pout } = await exec("pwd");
-  const { stdout:lout } = await exec("ls -a");
   
-  console.log("PWD -\n",pout);
-  console.log("LS  -\n",lout);
+  await exec("pwd");
+  await exec("cd ../ && pwd");
   /*
-    PWD -
     /Users/user/runner/test
-
-    LS  -
-     .
-    ..
-    test.js
   */
+  { stdout } = ;
+  console.log(stdout);
+  
+  
+  { stdout } = await exec("pwd");
+  
+  console.log(stdout);
+  /*
+    /Users/user/runner/test
+  */
+  
+  
   
   // There is always a way to find the path when executing the process. Easy is always good.
   

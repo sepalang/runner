@@ -1,11 +1,12 @@
 const runner = require('../dist');
 
-runner(async ({ exec })=>{
-  const { stdout:pwdout } = await exec("pwd");
-  const { stdout:lsout } = await exec("ls -a");
+runner(async ({ exec })=>{  
+  let stdout;
+  ({ stdout } = await exec("ls -a",{print:false}));
+  console.log("stdout 1",stdout);
   
-  console.log("PWD -\n",pwdout);
-  console.log("LS  -\n",lsout)
+  ({ stdout } = await exec(["ls", "-a"],{print:false}));
+  console.log("stdout 2",stdout);
 })
 .catch((e)=>{
   // catch block;

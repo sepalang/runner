@@ -2,8 +2,11 @@ const { spawn } = require("child_process");
 const path = require("path");
 
 const exec = function exec(commands,options){
+  
+  const argvs = Array.isArray(commands) ? commands : commands.trim().split(/\s/);
+  
   return new Promise((resolve,reject)=>{
-    const argvs = commands.trim().split(/\s/);
+    
     const execute = argvs.shift();
     
     if(typeof options === "object"){
@@ -42,18 +45,21 @@ const exec = function exec(commands,options){
     
     const outdata = (data) => {
       stdout = data.toString();
-      allowPrint && process.stdout.write(data);
+      if(allowPrint === false) return;
+      process.stdout.write(data);
     };
       
     const errdata = (data) => {
       stderr = data.toString();
-      allowPrint && process.stderr.write(data);
+      if(allowPrint === false) return;
+      process.stderr.write(data);
     };
     //next feature. It still has tmux (stdio) and vim (resize) issues.
     //if(allowPrint){
     //  process.stdin.setRawMode(true);
     //  process.stdin.on('data', indata);
     //}
+    
     application.stdout.on('data', outdata);
     application.stderr.on('data', errdata);
     
