@@ -4,7 +4,7 @@ It was created to make child processes easier.
 ### usage
 Run the command from your npm project.
 ```
-npm install sepalang/runner
+npm install @sepalang/runner
 ```
 
 Then write an async await function to execute sequentially.
