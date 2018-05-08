@@ -1,6 +1,6 @@
 const runner = require('../dist');
 
-runner(async ({ exec, find })=>{
+runner(async ({ run, find })=>{
   const path1 = find("");
   const path2 = find(".");
   const path3 = find("./");

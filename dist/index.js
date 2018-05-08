@@ -1,14 +1,26 @@
-const { spawn } = require("child_process");
-const path = require("path");
+#!/usr/bin/env node
 
-const exec = function exec(commands,options){
+const { spawn } = require("child_process");
+const npmPath   = require('npm-path');
+const path      = require("path");
+
+const run = function run(commands,options){
   
-  const argvs = Array.isArray(commands) ? commands : commands.trim().split(/\s/);
+  const argvs    = Array.isArray(commands) ? commands : commands.trim().split(/\s/);
+  const unixLike = process.platform !== 'win32';
+  
+  if (unixLike === true) {
+    argvs.unshift('-c');
+    argvs.unshift('sh');
+  } else {
+    argvs.unshift('/c');
+    argvs.unshift(process.env.comspec || 'cmd');
+  }
   
   return new Promise((resolve,reject)=>{
     
     const execute = argvs.shift();
-    
+
     if(typeof options === "object"){
       if(options.env){
         Object.assign({
@@ -17,7 +29,10 @@ const exec = function exec(commands,options){
         },
         options,
         {
-          env:Object.assign(process.env,options.env)
+          env:Object.assign(process.env,options.env),
+          stdio: [
+            process.stdin
+          ]
         })
       }
       options = options;
@@ -25,17 +40,27 @@ const exec = function exec(commands,options){
       options = {
         cwd:options,
         env:process.env,
-        print:true
+        print:true,
+        stdio: [
+          process.stdin
+        ]
       }
     } else {
       options = {
         env:process.env,
-        print:true
+        print:true,
+        stdio: [
+          process.stdin
+        ]
       };
     }
     
-    const application = spawn(execute, argvs, options);
-    const allowPrint = options.print !== false;
+    npmPath(options);
+    
+    const [shOpt, ...shRun] = argvs;
+    const shOptRun          = [shOpt, `${shRun.join(' ')}`];
+    const application = spawn(execute, shOptRun, options);
+    const allowPrint  = options.print !== false;
     let stdout;
     let stderr;
     
@@ -54,21 +79,15 @@ const exec = function exec(commands,options){
       if(allowPrint === false) return;
       process.stderr.write(data);
     };
-    //next feature. It still has tmux (stdio) and vim (resize) issues.
-    //if(allowPrint){
-    //  process.stdin.setRawMode(true);
-    //  process.stdin.on('data', indata);
-    //}
     
     application.stdout.on('data', outdata);
     application.stderr.on('data', errdata);
     
+    application.on('exit', (code) => {
+      //child process closed
+    });
+    
     application.on('close', (code) => {
-      //next feature
-      //if(allowPrint){
-      //  process.stdin.setRawMode(false);
-      //  process.stdin.removeListener('data', indata);
-      //}
       application.stdout.removeListener('data', outdata);
       application.stderr.removeListener('data', errdata);
       
@@ -96,8 +115,11 @@ const timeout = function (fn, time) {
 
 module.exports = function(asyncFn){
   // console.log("🏃 Runner 🏃")
-  return Promise
-  .resolve(asyncFn({ exec, find, timeout, pathResolve:path.resolve, pathParase:path.parse }))
+  return (new Promise(resolve=>{
+    npmPath((err,$PATH)=>{
+      resolve(asyncFn({ run, find, timeout, pathResolve:path.resolve, pathParase:path.parse }));
+    });
+  }))
   .then(e=>{
     // console.log("👏 Oh yeah, Running was successful. 👏")
     return Promise.resolve(e);

@@ -1,9 +1,10 @@
 {
   "name": "@sepalang/runner",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "It was created to make child processes easier.",
   "main": "dist/index.js",
   "scripts": {
+    "t": "test",
     "test": "node test/test1.js"
   },
   "repository": {
@@ -20,7 +21,7 @@
   },
   "homepage": "https://github.com/sepalang/runner#readme",
   "dependencies": {
-    "cross-spawn": "^6.0.5"
+    "npm-path": "^2.0.4"
   },
   "devDependencies": {}
 }

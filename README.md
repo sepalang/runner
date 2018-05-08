@@ -11,17 +11,22 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require('runner'); //or import runner form 'runner';
 
-runner(async ({ exec, find, timeout })=>{
+runner(async ({ run, find, timeout })=>{
   // Sequential execution using await
   
   
-  await exec("pwd");
+  await run("pwd");
   /*
     /Users/user/runner/test
   */
   
+  // Can run vim.
+  await run("vim");
   
-  { stdout } = await exec("pwd",{ print:false });
+  // Can run npm.
+  await run("npm run-script");
+  
+  { stdout } = await run("pwd",{ print:false });
   
   console.log(stdout);
   /*
