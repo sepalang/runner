@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { spawn } = require("child_process");
-const npmPath   = require('npm-path');
+const npmPath   = require("npm-path");
 const path      = require("path");
 
 const run = function run(commands,options){

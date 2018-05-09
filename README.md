@@ -11,7 +11,7 @@ npm install @sepalang/runner
 
 Then write an async await function to execute sequentially.
 ```js
-const runner = require('runner'); //or import runner form 'runner';
+const runner = require("runner"); //or import runner form "runner";
 
 runner(async ({ run, find, timeout })=>{
   // Sequential execution using await

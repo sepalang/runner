@@ -1,4 +1,4 @@
-const runner = require('../dist');
+const runner = require("../dist");
 
 runner(async ({ run })=>{  
   await run("vim ./test-vim.js");
