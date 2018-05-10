@@ -3,12 +3,13 @@ const runner = require("../dist");
 runner(async ({ run, find })=>{
   
   console.log("from executed file (default)")
+  const path0 = find();
   const path1 = find("");
   const path2 = find(".");
   const path3 = find("./");
   const path4 = find("./file.js");
   const path5 = find("../");
-  console.log({path1, path2, path3, path4, path5});
+  console.log({path0, path1, path2, path3, path4, path5});
 
   
   console.log("from __dirname (directory)")

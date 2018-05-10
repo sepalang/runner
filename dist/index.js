@@ -101,16 +101,16 @@ const run = function run(commands,options){
   });
 };
 
-const find = function(relative=".", basePath){
-  const usePathParam = typeof basePath === "string";
-  basePath = usePathParam ? basePath : process.argv[1];
+const find = function(relative, baseDir){
+  const usePathParam = typeof baseDir === "string";
+  baseDir = usePathParam ? baseDir : process.argv[1];
   
   if(!relative || relative === "."){
-    return basePath;
+    return baseDir;
   } else if(usePathParam === true) {
-    return path.resolve(basePath, relative);
+    return path.resolve(baseDir, relative);
   } else {
-    return path.resolve(path.resolve(basePath,"../"), relative);
+    return path.resolve(path.resolve(baseDir,"../"), relative);
   }
 }
 
