@@ -2,7 +2,7 @@ const runner = require("../dist");
 
 runner(async ({ run, find })=>{
   
-  console.log("from executed file (default)")
+  console.log("from executed file (default)");
   const path0 = find();
   const path1 = find("");
   const path2 = find(".");
@@ -12,7 +12,7 @@ runner(async ({ run, find })=>{
   console.log({path0, path1, path2, path3, path4, path5});
 
   
-  console.log("from __dirname (directory)")
+  console.log("from __dirname (directory)");
   const rpath1 = find("",__dirname);
   const rpath2 = find(".",__dirname);
   const rpath3 = find("./",__dirname);
