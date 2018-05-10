@@ -102,8 +102,16 @@ const run = function run(commands,options){
 };
 
 const find = function(relative=".", basePath){
-  basePath = typeof basePath === "string" ? basePath : process.argv[1];
-  return (!relative || relative === ".") ? basePath : path.resolve(path.resolve(basePath,"../"),relative);
+  const usePathParam = typeof basePath === "string";
+  basePath = usePathParam ? basePath : process.argv[1];
+  
+  if(!relative || relative === "."){
+    return basePath;
+  } else if(usePathParam === true) {
+    return path.resolve(basePath, relative);
+  } else {
+    return path.resolve(path.resolve(basePath,"../"), relative);
+  }
 }
 
 const timeout = function (fn, time) {
