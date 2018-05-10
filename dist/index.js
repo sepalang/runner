@@ -101,8 +101,9 @@ const run = function run(commands,options){
   });
 };
 
-const find = function(relative="."){
-  return !relative || relative === "." ? process.argv[1] : path.resolve(path.resolve(process.argv[1],"../"),relative);
+const find = function(relative=".", basePath){
+  basePath = typeof basePath === "string" ? basePath : process.argv[1];
+  return (!relative || relative === ".") ? basePath : path.resolve(path.resolve(basePath,"../"),relative);
 }
 
 const timeout = function (fn, time) {
