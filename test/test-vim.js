@@ -1,7 +1,8 @@
 const runner = require("../dist");
 
 runner(async ({ run })=>{  
-  await run("vim ./test-vim.js");
+  const result = await run("vim ./test-vim.js");
+  console.log("vim stdout",result);
 })
 .catch((e)=>{
   // catch block;

@@ -24,77 +24,82 @@ const run = function run(commands,options){
     if(typeof options === "object"){
       if(options.env){
         Object.assign({
-          env:process.env,
-          print:true
+          env    : process.env,
+          capture: false
         },
         options,
         {
-          env:Object.assign(process.env,options.env),
-          stdio: [
-            process.stdin
-          ]
+          env  : Object.assign(process.env,options.env)
         })
       }
       options = options;
     } else if(options === "string") {
       options = {
-        cwd:options,
-        env:process.env,
-        print:true,
-        stdio: [
-          process.stdin
-        ]
+        cwd    : options,
+        env    : process.env,
+        capture: false
       }
     } else {
       options = {
-        env:process.env,
-        print:true,
-        stdio: [
-          process.stdin
-        ]
+        env    : process.env,
+        capture: false
       };
     }
     
+    const captureMode = options.capture === true;
     npmPath(options);
+    
+    let stdoutOutput = null;
+    let stderrOutput = null;
+    
+    let outevt = (data)=>{
+      const content = data.toString().replace(/\n$/,'');
+      stdoutOutput.push(content);
+    }
+    
+    let errevt = (data)=>{
+      const content = data.toString().replace(/\n$/,'');
+      stderrOutput.push(content);
+    }
+    
+    if(captureMode){
+      stdoutOutput = [];
+      stderrOutput = [];
+      options.stdio = [
+        process.stdin,
+        null,
+        null
+      ];
+    } else {
+      options.stdio = [
+        process.stdin,
+        process.stdout,
+        process.stderr
+      ];
+    }
     
     const [shOpt, ...shRun] = argvs;
     const shOptRun          = [shOpt, `${shRun.join(' ')}`];
     const application = spawn(execute, shOptRun, options);
-    const allowPrint  = options.print !== false;
-    let stdout;
-    let stderr;
     
-    const indata = (c)=>{
-      application.stdin.write(c);
-    };
-    
-    const outdata = (data) => {
-      stdout = data.toString();
-      if(allowPrint === false) return;
-      process.stdout.write(data);
-    };
-      
-    const errdata = (data) => {
-      stderr = data.toString();
-      if(allowPrint === false) return;
-      process.stderr.write(data);
-    };
-    
-    application.stdout.on('data', outdata);
-    application.stderr.on('data', errdata);
+    if(captureMode){
+      application.stdout.on('data', outevt);
+      application.stderr.on('data', errevt);
+    }
     
     application.on('exit', (code) => {
-      //child process closed
+      //exit
     });
     
     application.on('close', (code) => {
-      application.stdout.removeListener('data', outdata);
-      application.stderr.removeListener('data', errdata);
-      
+      if(captureMode){
+        application.stdout.removeListener('data', outevt);
+        application.stderr.removeListener('data', errevt);
+      }
       if(code === 0){
-        resolve({ code, stdout, stderr });
+        resolve({ code, stdout:stdoutOutput, stderr:stderrOutput });
       } else {
-        reject({ code, stdout, stderr });
+        reject({ code, stdout:stdoutOutput, stderr:stderrOutput });
       }
     });
     

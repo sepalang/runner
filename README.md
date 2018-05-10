@@ -16,24 +16,27 @@ const runner = require("runner"); //or import runner form "runner";
 runner(async ({ run, find, timeout })=>{
   // Sequential execution using await
   
-  
   await run("pwd");
   /*
     /Users/user/runner/test
   */
   
+  
   // Can run vim.
   await run("vim");
+  
   
   // Can run npm.
   await run("npm run-script");
   
-  { stdout } = await run("pwd",{ print:false });
   
-  console.log(stdout);
-  /*
-    /Users/user/runner/test
-  */
+  let stdout;
+  ({ stdout } = await run("pwd",{ capture:true }));
+  console.log(stdout); // ['/Users/user/runner/test']
+  
+  
+  ({ stdout } = await run("ls -a",{ capture:true }));
+  console.log(stdout); // [ '.\n..\ntest-vim.js\ntest1.js\ntest2.js\ntest3.js' ]
   
   
   // There is always a way to find the path when executing the process. Easy is always good.
