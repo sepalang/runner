@@ -21,6 +21,8 @@ const run = function run(commands,options){
     
     const execute = argvs.shift();
 
+    console.log("options",options)
+    
     if(typeof options === "object"){
       if(options.env){
         Object.assign({
@@ -33,7 +35,7 @@ const run = function run(commands,options){
         })
       }
       options = options;
-    } else if(options === "string") {
+    } else if(typeof options === "string") {
       options = {
         cwd    : options,
         env    : process.env,

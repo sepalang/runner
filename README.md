@@ -75,3 +75,8 @@ runner(async ({ run, find, timeout })=>{
 });
 
 ```
+
+### use bin
+```
+runner ./other/pacakge npm start
+```
