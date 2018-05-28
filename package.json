@@ -1,10 +1,10 @@
 {
   "name": "@sepalang/runner",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "It was created to make child processes easier.",
   "main": "dist/index.js",
   "bin": {
-    "myargv": "bin/myargv.js"
+    "runner": "bin/runner.js"
   },
   "scripts": {
     "t": "test",
