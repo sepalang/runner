@@ -20,8 +20,6 @@ const run = function run(commands,options){
   return new Promise((resolve,reject)=>{
     
     const execute = argvs.shift();
-
-    console.log("options",options)
     
     if(typeof options === "object"){
       if(options.env){
