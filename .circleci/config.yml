@@ -1,0 +1,61 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~/project/runner
+  docker:
+    - image: labeldock/circleci-node:8.11
+
+jobs:
+  initialize:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: npm module
+          command: npm install
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - runner
+
+  test-1:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: TEST
+          command: npm run test:1
+
+  test-2:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: TEST
+          command: npm run test:2
+
+  test-3:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: TEST
+          command: npm run test:3
+
+workflows:
+  version: 2
+  task:
+    jobs:
+      - initialize
+      - test-1:
+          requires:
+            - initialize
+      - test-2:
+          requires:
+            - initialize
+      - test-3:
+          requires:
+            - initialize
