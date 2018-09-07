@@ -1,14 +1,16 @@
 {
   "name": "@sepalang/runner",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "It was created to make child processes easier.",
   "main": "dist/index.js",
   "bin": {
     "runner": "bin/runner.js"
   },
   "scripts": {
-    "t": "test",
-    "test": "node test/test1.js"
+    "test:1": "node test/test1.js",
+    "test:2": "node test/test2.js",
+    "test:3": "node test/test3.js",
+    "test": "npm run test:1 && npm run test:2 && npm run test:3"
   },
   "repository": {
     "type": "git",
