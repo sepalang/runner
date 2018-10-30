@@ -15,7 +15,7 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require("runner"); //or import runner form "runner";
 
-runner(async ({ run, find, timeout })=>{
+runner(async ({ run, cd, cwcd, timeout })=>{
   // Sequential execution using await
   
   await run("pwd");
@@ -41,15 +41,15 @@ runner(async ({ run, find, timeout })=>{
   console.log(stdout); // [ '.\n..\ntest-vim.js\ntest1.js\ntest2.js\ntest3.js' ]
   
   
-  // There is always a way to find the path when executing the process. Easy is always good.
+  // There is always a way to find the path when executing the file. Easy is always good.
   
-  const path1 = find("");
-  const path2 = find(".");
-  const path3 = find("./");
-  const path4 = find("./file.js");
-  const path5 = find("../");
+  const path1 = cd("");
+  const path2 = cd(".");
+  const path3 = cd("./");
+  const path4 = cd("./file.js");
+  const path5 = cd("../");
   
-  console.log({path1, path2, path3, path4});
+  console.log({path1, path2, path3, path4, path5});
   /*
     { 
       path1: '/Users/user/runner/test/test.js',
@@ -57,6 +57,22 @@ runner(async ({ run, find, timeout })=>{
       path3: '/Users/user/runner/test',
       path4: '/Users/user/runner/test/file.js',
       path5: '/Users/user/runner'
+    }
+  */
+  
+  const path6 = cwcd();
+  const path7 = cwcd('test');
+  const path8 = cwcd('test/test.js');
+  const path9 = cwcd('../');
+  
+  console.log({ path6, path7, path8, path9 });
+  
+  /*
+    { 
+      path6: '/Users/user/runner/',
+      path7: '/Users/user/runner/test',
+      path8: '/Users/user/runner/test/test.js',
+      path9: '/Users/user/'
     }
   */
   
