@@ -1,5 +1,5 @@
-const { spawn } = require("child_process")
-const npmPath   = require("npm-path")
+const spawn = require("cross-spawn")
+const npmPath = require("npm-path")
 
 const run = function run (commands, options){
   
