@@ -1,5 +1,6 @@
 const spawn = require("cross-spawn")
 const npmPath = require("npm-path")
+const { Transform } = require('stream');
 
 const run = function run (commands, options){
   
@@ -79,8 +80,20 @@ const run = function run (commands, options){
     const application = spawn(execute, shOptRun, options)
     
     if(captureMode){
-      application.stdout.on('data', outevt)
-      application.stderr.on('data', errevt)
+      const stdoutTransform = new Transform({
+        transform(chunk, encoding, callback) {
+          outevt(chunk);
+          this.push(chunk);
+        }
+      });
+      const stderrTransform = new Transform({
+        transform(chunk, encoding, callback) {
+          errevt(chunk);
+          this.push(chunk);
+        }
+      });
+      application.stdout.pipe(stdoutTransform).pipe(process.stdout);
+      application.stderr.pipe(stderrTransform).pipe(process.stderr);
     }
     
     application.on('exit', ()=>{
@@ -92,6 +105,7 @@ const run = function run (commands, options){
         application.stdout.removeListener('data', outevt)
         application.stderr.removeListener('data', errevt)
       }
+      
       if(code === 0){
         resolve({ code, stdout: stdoutOutput, stderr: stderrOutput })
       } else {
