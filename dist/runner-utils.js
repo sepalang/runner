@@ -5,7 +5,7 @@ const deprecatedHelper = (fn, name, use)=>{
   return (...args)=>{
     if(!touched){
       touched = true;
-      console.log(`${name || fn.name} is deprecated.` + use ? `use ${use}` : '');
+      console.log(`@sepalang/runner :: ${name || fn.name} is deprecated.` + (use ? `use ${use}` : ''));
     }
     return fn(...args);
   }
@@ -29,8 +29,9 @@ module.exports = function ({ fileDir, processDir }){
   };
   
   
-  const dircd = (relative, baseDir)=>baseCd(relative, baseDir, fileDir)
-  const cwdcd = (relative, baseDir)=>baseCd(relative, baseDir, processDir)
+  const cd = (relative, baseDir)=>baseCd(relative, baseDir, fileDir)
+  const dircd = (relative)=>baseCd(relative, fileDir)
+  const cwdcd = (relative)=>baseCd(relative, processDir)
   
   const timeout = (fn, time)=>{
     return new Promise((resolve)=>{
@@ -42,8 +43,8 @@ module.exports = function ({ fileDir, processDir }){
   const layer = path.relative
   const join = path.join
   
+  
   // deprecated
-  const cd = deprecatedHelper(dircd, "dircd", "{ dircd }")
   const cwcd = deprecatedHelper(cwdcd, "cwdcd", "{ cwdcd }")
   const pathResolve = deprecatedHelper(path.resolve, "pathResolve", "{ require('path').resolve }")
   const pathParse = deprecatedHelper(path.parse, "pathParse", "{ parse }")

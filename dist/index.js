@@ -1,6 +1,7 @@
 const spawn = require("cross-spawn")
 const npmPath = require("npm-path")
-const { Transform } = require('stream');
+const pkgDir = require('pkg-dir')
+const { Transform } = require('stream')
 
 const run = function run (commands, options){
   
@@ -126,14 +127,13 @@ module.exports = function (asyncFn){
   const processDir  = process.cwd();
   
   return (new Promise(resolve=>{
-    const runnerUtils = require("./runner-utils")({ fileDir, processDir })
-
     // eslint-disable-next-line no-unused-vars, handle-callback-err
-    npmPath((err, $PATH)=>{
-      const runActions = { run, ...runnerUtils, npmPath: $PATH }
-      resolve(asyncFn(runActions))
+    npmPath(async (err, npmPath)=>{
+      const pacakgePath = await pkgDir(processDir);
+      const baseOptions = { run, npmPath, pacakgePath };
+      const runnerUtils = require("./runner-utils")({ fileDir, processDir })
+      resolve(asyncFn({ ...baseOptions, ...runnerUtils }))
     })
-    
   }))
   .then(e=>{
     // console.log("👏 Oh yeah, Running was successful. 👏")
