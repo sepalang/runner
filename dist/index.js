@@ -123,7 +123,7 @@ module.exports = function (asyncFn){
     return Promise.resolve(e)
   })
   .catch(e=>{
-    console.log("💥🏃 Opps, Runner has stopped working.")
+    // console.log("💥🏃 Opps, Runner has stopped working.")
     console.log(e)
     return Promise.reject(e)
   })
