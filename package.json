@@ -1,6 +1,6 @@
 {
   "name": "@sepalang/runner",
-  "version": "0.10.0.3",
+  "version": "0.10.1",
   "description": "It was created to make child processes easier.",
   "main": "dist/index.js",
   "engines": {
@@ -34,6 +34,7 @@
     "npm-path": "^2.0.4"
   },
   "devDependencies": {
-    "@sepalang/lintpad": "^0.2.1"
+    "@sepalang/lintpad": "^0.2.1",
+    "@sepalang/testpad": "^0.1.2"
   }
 }

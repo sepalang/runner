@@ -1,4 +1,16 @@
 const path = require("path")
+
+const deprecatedHelper = (fn, name, use)=>{
+  let touched = false;
+  return (...args)=>{
+    if(!touched){
+      touched = true;
+      console.log(`${name || fn.name} is deprecated.` + use ? `use ${use}` : '');
+    }
+    return fn(...args);
+  }
+};
+
 module.exports = function ({ fileDir, processDir }){
   
   const baseCd = (relative, baseDir, hiddenBaseDir)=>{
@@ -16,14 +28,9 @@ module.exports = function ({ fileDir, processDir }){
     }
   };
   
-  const find = (a,b)=>{
-    console.log("@sepalang/runner::find is deprecated .. use cd");
-    return baseCd(a,b);
-  }
   
-  const cd = (relative, baseDir)=>baseCd(relative, baseDir, fileDir)
-  const cwcd = (relative, baseDir)=>baseCd(relative, baseDir, processDir)
-  
+  const dircd = (relative, baseDir)=>baseCd(relative, baseDir, fileDir)
+  const cwdcd = (relative, baseDir)=>baseCd(relative, baseDir, processDir)
   
   const timeout = (fn, time)=>{
     return new Promise((resolve)=>{
@@ -31,11 +38,20 @@ module.exports = function ({ fileDir, processDir }){
     })
   }
   
-  const pathResolve = path.resolve
-  const pathParse = path.parse
-  const pathJoin = path.join
-  const pathRelative = path.relative
+  const parse = path.parse
+  const layer = path.relative
+  const join = path.join
   
-  return { find, cd, cwcd, timeout, pathResolve, pathParse, pathJoin, pathRelative }
+  // deprecated
+  const cd = deprecatedHelper(dircd, "dircd", "{ dircd }")
+  const cwcd = deprecatedHelper(cwdcd, "cwdcd", "{ cwdcd }")
+  const pathResolve = deprecatedHelper(path.resolve, "pathResolve", "{ require('path').resolve }")
+  const pathParse = deprecatedHelper(path.parse, "pathParse", "{ parse }")
+  const pathJoin = deprecatedHelper(path.join, "pathJoin", "{ join }")
+  const pathRelative = deprecatedHelper(path.relative, "pathRelative", "{ layer }")
   
+  return { 
+    dircd, cwdcd, timeout, parse, layer, join, 
+    cd, cwcd, pathResolve, pathParse, pathJoin, pathRelative 
+  }
 }
