@@ -48,6 +48,9 @@ const run = function run (commands, options){
     
     let stdoutOutput = null
     let stderrOutput = null
+    let stdoutCaptureStream = null;
+    let stderrCaptureStream = null;
+    
     
     let outevt = (data)=>{
       const content = data.toString().replace(/\n$/, '')
@@ -80,20 +83,20 @@ const run = function run (commands, options){
     const application = spawn(execute, shOptRun, options)
     
     if(captureMode){
-      const stdoutTransform = new Transform({
+      stdoutCaptureStream = new Transform({
         transform(chunk, encoding, callback) {
           outevt(chunk);
           this.push(chunk);
         }
       });
-      const stderrTransform = new Transform({
+      stderrCaptureStream = new Transform({
         transform(chunk, encoding, callback) {
           errevt(chunk);
           this.push(chunk);
         }
       });
-      application.stdout.pipe(stdoutTransform).pipe(process.stdout);
-      application.stderr.pipe(stderrTransform).pipe(process.stderr);
+      application.stdout.pipe(stdoutCaptureStream).pipe(process.stdout);
+      application.stderr.pipe(stderrCaptureStream).pipe(process.stderr);
     }
     
     application.on('exit', ()=>{
@@ -102,8 +105,8 @@ const run = function run (commands, options){
     
     application.on('close', (code)=>{
       if(captureMode){
-        application.stdout.removeListener('data', outevt)
-        application.stderr.removeListener('data', errevt)
+        stdoutCaptureStream.close && stdoutCaptureStream.close();
+        stderrCaptureStream.close && stderrCaptureStream.close();
       }
       
       if(code === 0){
