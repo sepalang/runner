@@ -94,7 +94,7 @@ runner(async ({ run, cd, cwcd, timeout })=>{
 
 ```
 
-### use bin
+### cmd
 ```
-runner ./other/pacakge npm start
+runner ./other/cwd/path npm start
 ```
