@@ -5,16 +5,20 @@ describe('run', () => {
   let stdout;
   let code;
   
-  it('Has pwd then pass', async ()=>runner(async ({ run })=>{
-    const { code } = await run("pwd");
-    expect(code).toEqual(0);
-  }));
+  it('Has pwd then pass', async ()=>{
+    await runner(async ({ run })=>{
+      const { code } = await run("pwd");
+      expect(code).toEqual(0);
+    })
+  });
   
-  it('Run root and /test/spec.js then pass',async ()=>await runner(async ({ run, join })=>{
-    const { stdout:[pwd1] } = await run("pwd", { capture:true });
-    expect(pwd1).toEqual(join(__dirname, ".."));
-    expect(join(pwd1,"test")).toEqual(__dirname);
-  }));
+  it('Run root and /test/spec.js then pass',async ()=>{
+    await runner(async ({ run, join })=>{
+      const { stdout:[pwd1] } = await run("pwd", { capture:true });
+      expect(pwd1).toEqual(join(__dirname, ".."));
+      expect(join(pwd1,"test")).toEqual(__dirname);
+    })
+  });
   
   it('Can run bin file in node_modules then pass',async ()=>{
     await runner(async ({ run, join })=>{
