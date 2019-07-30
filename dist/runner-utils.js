@@ -47,7 +47,7 @@ module.exports = function ({ fileDir, processDir }){
   const layer = path.relative
   const join = path.join
   const echo = (...args)=>{ console.log(...args) }
-  const prompt = async (option, { onSubmit, onCancle } = {})=>{
+  const prompt = async (option, { onSubmit } = {})=>{
     const baseOptions = Array.from(asArray(option)).map((param)=>{
       let option = null
       
@@ -75,7 +75,15 @@ module.exports = function ({ fileDir, processDir }){
       throw new Error("Required prompt parameter option")
     }
     
-    const { result } = await promptsUtil(promptOption, { onSubmit, onCancle })
+    const { result } = await promptsUtil(
+      promptOption,
+      {
+        onSubmit,
+        onCancel: ()=>{
+          process.exit(1)
+        }
+      }
+    )
     return result
   }
   

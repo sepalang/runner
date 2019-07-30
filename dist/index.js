@@ -115,8 +115,11 @@ const run = function run (commands, options){
       if(code === 0){
         resolve({ code, stdout: stdoutOutput, stderr: stderrOutput })
       } else {
-        //eslint-disable-next-line prefer-promise-reject-errors
-        reject({ code, stdout: stdoutOutput, stderr: stderrOutput })
+        const error = new Error("Runner has stopped working.")
+        error.code = code
+        error.stdout = stdoutOutput
+        error.stderr = stderrOutput
+        reject(error)
       }
     })
     
@@ -143,7 +146,6 @@ module.exports = function (asyncFn){
   })
   .catch(e=>{
     // console.log("💥🏃 Opps, Runner has stopped working.")
-    console.log(e)
     return Promise.reject(e)
   })
 }
