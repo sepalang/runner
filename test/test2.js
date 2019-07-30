@@ -1,6 +1,6 @@
 const runner = require("../dist");
 
-runner(async ({ run, cd, cwcd })=>{
+runner(async ({ run, cd, cwdcd })=>{
   
   console.log("from executed file (default)");
   const path0 = cd();
@@ -21,10 +21,10 @@ runner(async ({ run, cd, cwcd })=>{
   console.log({rpath1, rpath2, rpath3, rpath4, rpath5});
   
   
-  const path6 = cwcd();
-  const path7 = cwcd('./test');
-  const path8 = cwcd('./test/test.js');
-  const path9 = cwcd('../');
+  const path6 = cwdcd();
+  const path7 = cwdcd('./test');
+  const path8 = cwdcd('./test/test.js');
+  const path9 = cwdcd('../');
   console.log({ path6, path7, path8, path9 });
 
 })

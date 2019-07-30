@@ -49,8 +49,8 @@ const run = function run (commands, options){
     
     let stdoutOutput = null
     let stderrOutput = null
-    let stdoutCaptureStream = null;
-    let stderrCaptureStream = null;
+    let stdoutCaptureStream = null
+    let stderrCaptureStream = null
     
     
     let outevt = (data)=>{
@@ -85,19 +85,21 @@ const run = function run (commands, options){
     
     if(captureMode){
       stdoutCaptureStream = new Transform({
-        transform(chunk, encoding, callback) {
-          outevt(chunk);
-          this.push(chunk);
+        // eslint-disable-next-line no-unused-vars
+        transform (chunk, encoding, callback){
+          outevt(chunk)
+          this.push(chunk)
         }
-      });
+      })
       stderrCaptureStream = new Transform({
-        transform(chunk, encoding, callback) {
-          errevt(chunk);
-          this.push(chunk);
+        // eslint-disable-next-line no-unused-vars
+        transform (chunk, encoding, callback){
+          errevt(chunk)
+          this.push(chunk)
         }
-      });
-      application.stdout.pipe(stdoutCaptureStream).pipe(process.stdout);
-      application.stderr.pipe(stderrCaptureStream).pipe(process.stderr);
+      })
+      application.stdout.pipe(stdoutCaptureStream).pipe(process.stdout)
+      application.stderr.pipe(stderrCaptureStream).pipe(process.stderr)
     }
     
     application.on('exit', ()=>{
@@ -106,8 +108,8 @@ const run = function run (commands, options){
     
     application.on('close', (code)=>{
       if(captureMode){
-        stdoutCaptureStream.close && stdoutCaptureStream.close();
-        stderrCaptureStream.close && stderrCaptureStream.close();
+        stdoutCaptureStream.close && stdoutCaptureStream.close()
+        stderrCaptureStream.close && stderrCaptureStream.close()
       }
       
       if(code === 0){
@@ -124,13 +126,13 @@ const run = function run (commands, options){
 module.exports = function (asyncFn){
   // console.log("🏃 Runner 🏃")
   const fileDir = process.argv[1]
-  const processDir  = process.cwd();
+  const processDir  = process.cwd()
   
   return (new Promise(resolve=>{
     // eslint-disable-next-line no-unused-vars, handle-callback-err
     npmPath(async (err, npmPath)=>{
-      const pacakgePath = await pkgDir(processDir);
-      const baseOptions = { run, npmPath, pacakgePath };
+      const pacakgePath = await pkgDir(processDir)
+      const baseOptions = { run, npmPath, pacakgePath }
       const runnerUtils = require("./runner-utils")({ fileDir, processDir })
       resolve(asyncFn({ ...baseOptions, ...runnerUtils }))
     })

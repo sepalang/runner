@@ -1,15 +1,19 @@
 const path = require("path")
+const promptsUtil = require("prompts")
+const { isPlainObject, asArray } = require("./lite-nody")
 
+/*
 const deprecatedHelper = (fn, name, use)=>{
-  let touched = false;
+  let touched = false
   return (...args)=>{
     if(!touched){
-      touched = true;
-      console.log(`@sepalang/runner :: ${name || fn.name} is deprecated.` + (use ? `use ${use}` : ''));
+      touched = true
+      console.log(`@sepalang/runner :: ${name || fn.name} is deprecated.` + (use ? `use ${use}` : ''))
     }
-    return fn(...args);
+    return fn(...args)
   }
-};
+}
+*/
 
 module.exports = function ({ fileDir, processDir }){
   
@@ -26,7 +30,7 @@ module.exports = function ({ fileDir, processDir }){
     } else {
       return path.join(baseDir, relative)
     }
-  };
+  }
   
   
   const cd = (relative, baseDir)=>baseCd(relative, baseDir, fileDir)
@@ -42,17 +46,40 @@ module.exports = function ({ fileDir, processDir }){
   const parse = path.parse
   const layer = path.relative
   const join = path.join
-  
-  
-  // deprecated
-  const cwcd = deprecatedHelper(cwdcd, "cwdcd", "{ cwdcd }")
-  const pathResolve = deprecatedHelper(path.resolve, "pathResolve", "{ require('path').resolve }")
-  const pathParse = deprecatedHelper(path.parse, "pathParse", "{ parse }")
-  const pathJoin = deprecatedHelper(path.join, "pathJoin", "{ join }")
-  const pathRelative = deprecatedHelper(path.relative, "pathRelative", "{ layer }")
+  const echo = (...args)=>{ console.log(...args) }
+  const prompt = async (option, { onSubmit, onCancle } = {})=>{
+    const baseOptions = Array.from(asArray(option)).map((param)=>{
+      let option = null
+      
+      if(typeof param === "string"){
+        param = {
+          type   : "text",
+          name   : "result",
+          message: param
+        }
+      }
+      
+      if(isPlainObject(param)){
+        param = Object.assign({}, param)
+        !param.type && (param.type = "text")
+        !param.name && (param.name = "result")
+        option = param
+      }
+      
+      return option
+    }).filter(Boolean)
+    
+    const promptOption = baseOptions[0]
+    
+    if(!promptOption){
+      throw new Error("Required prompt parameter option")
+    }
+    
+    const { result } = await promptsUtil(promptOption, { onSubmit, onCancle })
+    return result
+  }
   
   return { 
-    dircd, cwdcd, timeout, parse, layer, join, 
-    cd, cwcd, pathResolve, pathParse, pathJoin, pathRelative 
+    dircd, cwdcd, timeout, parse, layer, join, cd, echo, prompt
   }
 }

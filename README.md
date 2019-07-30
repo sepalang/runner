@@ -15,7 +15,7 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require("@sepalang/runner"); //or import runner form "runner";
 
-runner(async ({ run, cd, cwcd, timeout })=>{
+runner(async ({ run, cd, cwdcd, timeout, prompt, echo })=>{
   // Sequential execution using await
   
   await run("pwd");
@@ -60,10 +60,10 @@ runner(async ({ run, cd, cwcd, timeout })=>{
     }
   */
   
-  const path6 = cwcd();
-  const path7 = cwcd('test');
-  const path8 = cwcd('test/test.js');
-  const path9 = cwcd('../');
+  const path6 = cwdcd();
+  const path7 = cwdcd('test');
+  const path8 = cwdcd('test/test.js');
+  const path9 = cwdcd('../');
   
   console.log({ path6, path7, path8, path9 });
   
@@ -77,11 +77,20 @@ runner(async ({ run, cd, cwcd, timeout })=>{
   */
   
   //wait 3000ms
-  await timeout(3000);
-  
+  await timeout(3000);  
   await timeout(()=>{
     //wait 3000ms
   },3000);
+  
+  //prompt
+  const a = await prompt("Please enter any key")
+  echo(`You entered is '${a}'.`)
+  
+  const b = await prompt({
+    message: "Please enter y or n.",
+    validate: (input)=>["y","n"].includes(input) ? true : "Be sure to enter y or n."
+  })
+  echo(`You entered is ${b}`)
 })
 .catch((e)=>{
   // catch block;
