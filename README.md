@@ -101,5 +101,6 @@ runner(()=>{})
 
 ### cmd
 ```
+runner npm start
 runner ./other/cwd/path npm start
 ```
