@@ -15,7 +15,7 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require("@sepalang/runner"); //or import runner form "runner";
 
-runner(async ({ run, pwd, cwd, fwd, timeoutPromise, prompt, select })=>{
+runner(async ({ run })=>{
 
   // Sequential execution using await
   await run("pwd"); // /Users/user/runner/test
@@ -34,6 +34,10 @@ runner(async ({ run, pwd, cwd, fwd, timeoutPromise, prompt, select })=>{
   ({ stdout } = await run("ls -a",{ capture:true }));
   console.log(stdout); // [ '.\n..\ntest-vim.js\ntest1.js\ntest2.js\ntest3.js' ]
   
+})
+
+runner(async ({ pwd, cwd, fwd, timeoutPromise })=>{
+
   console.log("cwd", cwd)
   console.log("pwd", pwd)
   console.log("fwd", fwd)
@@ -43,8 +47,10 @@ runner(async ({ run, pwd, cwd, fwd, timeoutPromise, prompt, select })=>{
   await timeoutPromise(()=>{
     //wait 3000ms
   },3000);
-  
 
+})
+
+runner(async ({ prompt, select })=>{
   //prompt
   const anyKey = await prompt("Please enter any key")
   echo(`You entered is '${anyKey}'.`)
@@ -76,13 +82,16 @@ runner(async ({ run, pwd, cwd, fwd, timeoutPromise, prompt, select })=>{
   console.log("selectMultiple", selectMultiple) // ['SELECTED_FOO', 'SELECTED_BAR']
 
 })
-.catch((e)=>{
-  // catch block;
-  process.exit(1);
-})
+
+//
+runner(()=>{})
 .then(()=>{
   // finally block
   process.exit(0);
+})
+.catch((e)=>{
+  // catch block;
+  process.exit(1);
 });
 
 ```
