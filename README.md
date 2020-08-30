@@ -15,82 +15,66 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require("@sepalang/runner"); //or import runner form "runner";
 
-runner(async ({ run, cd, cwdcd, timeout, prompt, echo })=>{
+runner(async ({ run, pwd, cwd, fwd, timeoutPromise, prompt, select })=>{
+
   // Sequential execution using await
-  
-  await run("pwd");
-  /*
-    /Users/user/runner/test
-  */
-  
+  await run("pwd"); // /Users/user/runner/test
   
   // Can run vim.
   await run("vim");
   
-  
   // Can run npm.
   await run("npm run-script");
   
-  
+
   let stdout;
   ({ stdout } = await run("pwd",{ capture:true }));
   console.log(stdout); // ['/Users/user/runner/test']
   
-  
   ({ stdout } = await run("ls -a",{ capture:true }));
   console.log(stdout); // [ '.\n..\ntest-vim.js\ntest1.js\ntest2.js\ntest3.js' ]
   
-  
-  // There is always a way to find the path when executing the file. Easy is always good.
-  
-  const path1 = cd("");
-  const path2 = cd(".");
-  const path3 = cd("./");
-  const path4 = cd("./file.js");
-  const path5 = cd("../");
-  
-  console.log({path1, path2, path3, path4, path5});
-  /*
-    { 
-      path1: '/Users/user/runner/test/test.js',
-      path2: '/Users/user/runner/test/test.js',
-      path3: '/Users/user/runner/test',
-      path4: '/Users/user/runner/test/file.js',
-      path5: '/Users/user/runner'
-    }
-  */
-  
-  const path6 = cwdcd();
-  const path7 = cwdcd('test');
-  const path8 = cwdcd('test/test.js');
-  const path9 = cwdcd('../');
-  
-  console.log({ path6, path7, path8, path9 });
-  
-  /*
-    { 
-      path6: '/Users/user/runner/',
-      path7: '/Users/user/runner/test',
-      path8: '/Users/user/runner/test/test.js',
-      path9: '/Users/user/'
-    }
-  */
+  console.log("cwd", cwd)
+  console.log("pwd", pwd)
+  console.log("fwd", fwd)
   
   //wait 3000ms
-  await timeout(3000);  
-  await timeout(()=>{
+  await timeoutPromise(3000);  
+  await timeoutPromise(()=>{
     //wait 3000ms
   },3000);
   
+
   //prompt
-  const a = await prompt("Please enter any key")
-  echo(`You entered is '${a}'.`)
+  const anyKey = await prompt("Please enter any key")
+  echo(`You entered is '${anyKey}'.`)
   
-  const b = await prompt({
+  const yn = await prompt({
     message: "Please enter y or n.",
     validate: (input)=>["y","n"].includes(input) ? true : "Be sure to enter y or n."
   })
-  echo(`You entered is ${b}`)
+  echo(`You entered is ${yn}`)
+
+
+  //select
+  const options = [
+    {label:"foo", value:"SELECTED_FOO", description: "I'm FOO"},
+    {label:"bar", value:"SELECTED_BAR", description: "I'm BAR"},
+  ]
+
+  const selectSingle = await select({
+    message: "selectSingle",
+    options,
+  })
+  console.log("selectSingle", selectSingle) // ['SELECTED_FOO']
+
+  const selectMultiple = await select({
+    message: "selectMultiple",
+    multiple: true,
+    options,
+  })
+  console.log("selectMultiple", selectMultiple) // ['SELECTED_FOO', 'SELECTED_BAR']
+
 })
 .catch((e)=>{
   // catch block;

@@ -1,38 +1,28 @@
 const runner = require("../dist");
 
-runner(async ({ run, cd, cwdcd })=>{
-  
-  console.log("from executed file (default)");
-  const path0 = cd();
-  const path1 = cd("");
-  const path2 = cd(".");
-  const path3 = cd("./");
-  const path4 = cd("./file.js");
-  const path5 = cd("../");
-  console.log({path0, path1, path2, path3, path4, path5});
+runner(async ({ cwd, pwd, fwd })=>{
+  const expectedCwd = process.cwd()
+  const expectedPwd = __dirname
+  const expectedFwd = __filename
 
-  
-  console.log("from __dirname (directory)");
-  const rpath1 = cd("",__dirname);
-  const rpath2 = cd(".",__dirname);
-  const rpath3 = cd("./",__dirname);
-  const rpath4 = cd("./file.js",__dirname);
-  const rpath5 = cd("../",__dirname);
-  console.log({rpath1, rpath2, rpath3, rpath4, rpath5});
-  
-  
-  const path6 = cwdcd();
-  const path7 = cwdcd('./test');
-  const path8 = cwdcd('./test/test.js');
-  const path9 = cwdcd('../');
-  console.log({ path6, path7, path8, path9 });
+  if(expectedCwd !== cwd){
+    throw new Error(`Expected cwd result is different { ${expectedCwd} !== ${cwd} }`)
+  }
 
-})
-.catch((e)=>{
-  // catch block;
-  process.exit(1);
+  if(expectedPwd !== pwd){
+    throw new Error(`Expected pwd result is different { ${expectedPwd} !== ${pwd} }`)
+  }
+
+  if(expectedFwd !== fwd){
+    throw new Error(`Expected fwd result is different { ${expectedFwd} !== ${fwd} }`)
+  }
 })
 .then(()=>{
   // finally block
   process.exit(0);
-});
+})
+.catch((e)=>{
+  console.log(e)
+  // catch block;
+  process.exit(1);
+})

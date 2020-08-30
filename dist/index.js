@@ -126,7 +126,7 @@ const run = function run (commands, options){
   })
 }
 
-module.exports = function (asyncFn){
+function runner(asyncFn){
   // console.log("🏃 Runner 🏃")
   const fileDir = process.argv[1]
   const processDir  = process.cwd()
@@ -149,3 +149,5 @@ module.exports = function (asyncFn){
     return Promise.reject(e)
   })
 }
+
+module.exports = runner

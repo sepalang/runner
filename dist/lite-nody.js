@@ -31,4 +31,10 @@ const toArray = function (data, option){
   return [data]
 }
 
-module.exports = { isAbsoluteNaN, isNone, isPlainObject, asArray, toArray }
+
+const doit = function(fn, args){
+  return typeof fn === 'function' ? fn(...asArray(args)) : undefined
+}
+
+
+module.exports = { isAbsoluteNaN, isNone, isPlainObject, asArray, toArray, doit }

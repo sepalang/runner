@@ -1,23 +1,24 @@
 const runner = require("../dist");
 
-runner(async ({ timeout })=>{
+runner(async ({ timeoutPromise })=>{
   console.log("0ms");
   
-  await timeout(3000);
+  await timeoutPromise(3000);
   console.log("3000ms");
   
-  await timeout(3000);
+  await timeoutPromise(3000);
   console.log("6000ms");
   
-  await timeout(()=>{
+  await timeoutPromise(()=>{
     console.log("9000ms");
   },3000);
-})
-.catch((e)=>{
-  // catch block;
-  process.exit(1);
 })
 .then(()=>{
   // finally block
   process.exit(0);
-});
+})
+.catch((e)=>{
+  console.log(e)
+  // catch block;
+  process.exit(1);
+})

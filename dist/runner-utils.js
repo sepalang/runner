@@ -1,6 +1,7 @@
 const path = require("path")
+const fs = require("fs")
 const promptsUtil = require("prompts")
-const { isPlainObject, asArray } = require("./lite-nody")
+const { isPlainObject, asArray, doit } = require("./lite-nody")
 
 /*
 const deprecatedHelper = (fn, name, use)=>{
@@ -17,68 +18,84 @@ const deprecatedHelper = (fn, name, use)=>{
 
 module.exports = function ({ fileDir, processDir }){
   
-  const baseCd = (relative, baseDir, hiddenBaseDir)=>{
-    baseDir = baseDir || hiddenBaseDir
-    const parsedPath = path.parse(baseDir)
-    // TODO : find better way for real file
-    const isBasePathOfFile = !!parsedPath['ext']
-    
-    if(!relative || relative === "."){
-      return baseDir
-    } else if(isBasePathOfFile === true){
-      return path.join(baseDir, "../", relative)
-    } else {
-      return path.join(baseDir, relative)
-    }
-  }
-  
-  
-  const cd = (relative, baseDir)=>baseCd(relative, baseDir, fileDir)
-  const dircd = (relative)=>baseCd(relative, fileDir)
-  const cwdcd = (relative)=>baseCd(relative, processDir)
-  
-  const timeout = (fn, time)=>{
+  const fwd = fileDir
+  const cwd = processDir
+  const pwd = fs.lstatSync(fileDir).isDirectory() ? fileDir : path.resolve(fileDir,".."); 
+
+  const timeoutPromise = (fn, time)=>{
     return new Promise((resolve)=>{
       return typeof fn === "number" ? setTimeout(()=>resolve(time), fn) : setTimeout(()=>resolve(typeof fn === "function" ? fn() : fn), time)
     })
   }
   
-  const parse = path.parse
-  const layer = path.relative
-  const join = path.join
-  const echo = (...args)=>{ console.log(...args) }
-  const prompt = async (option, { onSubmit } = {})=>{
-    const baseOptions = Array.from(asArray(option)).map((param)=>{
-      let option = null
-      
+  function basePromptConfig(param, { baseType="text", baseName="result" } = {}){
+    const promptParams = doit(function(){
       if(typeof param === "string"){
-        param = {
-          type   : "text",
-          name   : "result",
+        return {
+          type   : baseType,
+          name   : baseName,
           message: param
         }
+      } else if(isPlainObject(param)){
+        return Object.assign({
+          type   : baseType,
+          name   : baseName
+        }, param)
+      } else {
+        return null
       }
-      
-      if(isPlainObject(param)){
-        param = Object.assign({}, param)
-        !param.type && (param.type = "text")
-        !param.name && (param.name = "result")
-        option = param
-      }
-      
-      return option
-    }).filter(Boolean)
-    
-    const promptOption = baseOptions[0]
-    
-    if(!promptOption){
+    })
+
+    if(!promptParams){
       throw new Error("Required prompt parameter option")
     }
+
+    if(typeof promptParams.message !== "string"){
+      throw new Error("Prompt message is required.")
+    }
+
+    if(promptParams.options){
+      promptParams.choices = promptParams.options.map(function(option){
+        return {
+          title:option.label,
+          value:option.value,
+          description:option.description,
+          disabled:option.disabled
+        }
+      }).filter(Boolean)
+    }
+
+    if(baseType === "select"){
+      const { hint, multiple } = promptParams
+
+      if(!hint){
+        promptParams.hint = '- Space to select. Return to submit'
+      }
+
+      if(multiple === true){
+        promptParams.type = "multiselect"  
+      }
+
+    }
+
+    return promptParams
+  }
+
+  const prompt = async (option)=>{
+
+    const promptParams = basePromptConfig(option, { baseType:"text" })
     
     const { result } = await promptsUtil(
-      promptOption,
       {
-        onSubmit,
+        type : promptParams.type,
+        name : promptParams.name,
+        message : promptParams.message,
+        validate : promptParams.validate,
+      },
+      {
+        onSubmit: ()=>{
+          //TDDO option:{on:{submit}}
+        },
         onCancel: ()=>{
           process.exit(1)
         }
@@ -86,8 +103,36 @@ module.exports = function ({ fileDir, processDir }){
     )
     return result
   }
+
+  const select = async (option)=>{
+    const promptParams = basePromptConfig(option, { baseType:"select" })
+    
+    const { result } = await promptsUtil(
+      {
+        type : promptParams.type,
+        name : promptParams.name,
+        message : promptParams.message,
+        choices : promptParams.choices
+      },
+      {
+        onSubmit: ()=>{
+          //TDDO option:{on:{submit}}
+        },
+        onCancel: ()=>{
+          process.exit(1)
+        }
+      }
+    )
+    return asArray(result)
+  }
   
   return { 
-    dircd, cwdcd, timeout, parse, layer, join, cd, echo, prompt
+    timeoutPromise, 
+    prompt,
+    select,
+    path,
+    cwd,
+    fwd,
+    pwd
   }
 }

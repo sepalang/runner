@@ -25,12 +25,12 @@ runner(async ({ run })=>{
   console.log("run test 5");
   await run(["npm run-script"]);
 })
-.catch((e)=>{
-  console.log(e);
-  // catch block;
-  process.exit(1);
-})
 .then(()=>{
   // finally block
   process.exit(0);
-});
+})
+.catch((e)=>{
+  console.log(e)
+  // catch block;
+  process.exit(1);
+})
