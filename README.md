@@ -15,6 +15,7 @@ Then write an async await function to execute sequentially.
 ```js
 const runner = require("@sepalang/runner"); //or import runner form "runner";
 
+// Generate processors sequentially.
 runner(async ({ run })=>{
 
   // Sequential execution using await
@@ -36,11 +37,12 @@ runner(async ({ run })=>{
   
 })
 
+// Provides frequently used parameters when executing a process.
 runner(async ({ pwd, cwd, fwd, timeoutPromise })=>{
 
-  console.log("cwd", cwd)
-  console.log("pwd", pwd)
-  console.log("fwd", fwd)
+  console.log("cwd", cwd); // /Users/user/runner
+  console.log("pwd", pwd); // /Users/user/runner/test
+  console.log("fwd", fwd); // /Users/user/runner/test/test.js
   
   //wait 3000ms
   await timeoutPromise(3000);  
@@ -50,6 +52,7 @@ runner(async ({ pwd, cwd, fwd, timeoutPromise })=>{
 
 })
 
+// Provide input.
 runner(async ({ prompt, select })=>{
   //prompt
   const anyKey = await prompt("Please enter any key")
@@ -83,7 +86,7 @@ runner(async ({ prompt, select })=>{
 
 })
 
-//
+// Works as a Promise Base.
 runner(()=>{})
 .then(()=>{
   // finally block
