@@ -39,7 +39,7 @@
     "prompts": "^2.3.2"
   },
   "devDependencies": {
-    "@sepalang/lintpad": "^0.2.1",
+    "@sepalang/lintpad": "^0.3.0",
     "@sepalang/testpad": "^0.1.2"
   }
 }
