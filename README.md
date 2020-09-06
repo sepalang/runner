@@ -86,6 +86,12 @@ runner(async ({ prompt, select })=>{
 
 })
 
+// Load parameters outside the block
+async function asyncBlock(){
+  const { run } = await runner()
+  await run("pwd");
+}
+
 // Works as a Promise Base.
 runner(()=>{})
 .then(()=>{
