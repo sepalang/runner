@@ -137,7 +137,8 @@ function runner(asyncFn){
       const pacakgePath = await pkgDir(processDir)
       const baseOptions = { run, npmPath, pacakgePath }
       const runnerUtils = require("./runner-utils")({ fileDir, processDir })
-      resolve(asyncFn({ ...baseOptions, ...runnerUtils }))
+      const runnerParams = { ...baseOptions, ...runnerUtils }
+      resolve(typeof asyncFn === "function" ? asyncFn(runnerParams) : runnerParams)
     })
   }))
   .then(e=>{
