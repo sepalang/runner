@@ -84,13 +84,19 @@ module.exports = function ({ fileDir, processDir }){
   const prompt = async (option)=>{
 
     const promptParams = basePromptConfig(option, { baseType:"text" })
-    
+    const noTrim = option.noTrim === true
     const { result } = await promptsUtil(
       {
         type : promptParams.type,
         name : promptParams.name,
         message : promptParams.message,
-        validate : promptParams.validate,
+        validate : (input)=>{
+          if(typeof promptParams.validate === "function"){
+            return (noTrim === false && typeof input === "string") ? promptParams.validate(input.trim()) : promptParams.validate(input)
+          } else {
+            return true
+          }
+        },
       },
       {
         onSubmit: ()=>{
@@ -101,7 +107,7 @@ module.exports = function ({ fileDir, processDir }){
         }
       }
     )
-    return result
+    return (noTrim === false && typeof result === "string") ?  result.trim() : result
   }
 
   const select = async (option)=>{
