@@ -61,9 +61,11 @@ runner(async ({ pwd, cwd, fwd, timeoutPromise })=>{
 ```
 
 #### confirm
+```js
 runner(async ({ confirm })=>{
   const isOk = await confirm("Are you sure?")
 });
+```
 
 #### prompt
 ```js
