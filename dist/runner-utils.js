@@ -54,6 +54,12 @@ module.exports = function ({ fileDir, processDir }){
       throw new Error("Prompt message is required.")
     }
 
+    if(promptParams.type === "list"){
+      if(typeof promptParams.separator !== "string"){
+        promptParams.separator = ","
+      }
+    }
+
     if(promptParams.options){
       promptParams.choices = promptParams.options.map(function(option){
         return {
@@ -114,9 +120,14 @@ module.exports = function ({ fileDir, processDir }){
         type : promptParams.type,
         name : promptParams.name,
         message : promptParams.message,
+        separator : promptParams.separator,
         validate : (input)=>{
           if(typeof promptParams.validate === "function"){
-            return (noTrim === false && typeof input === "string") ? promptParams.validate(input.trim()) : promptParams.validate(input)
+            if(promptParams.type === "list"){
+              return noTrim === false ? promptParams.validate(input.filter((value)=>(value.trim() !== ""))) : promptParams.validate(input) 
+            } else {
+              return (noTrim === false && typeof input === "string") ? promptParams.validate(input.trim()) : promptParams.validate(input)
+            }
           } else {
             return true
           }
@@ -131,7 +142,14 @@ module.exports = function ({ fileDir, processDir }){
         }
       }
     )
-    return (noTrim === false && typeof result === "string") ?  result.trim() : result
+    
+    return doit(function(){
+      if(promptParams.type === "list"){
+        return noTrim === false ? result.filter((value)=>(value.trim() !== "")) : result
+      } else {
+        return (noTrim === false && typeof result === "string") ?  result.trim() : result
+      }
+    })
   }
 
   const select = async (option)=>{

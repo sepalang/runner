@@ -79,6 +79,12 @@ runner(async ({ prompt })=>{
     validate: (input)=>["y","n"].includes(input) ? true : "Be sure to enter y or n."
   })
   console.log(`You entered is ${yn}`)
+
+  const keywords = await prompt({
+    type: "list",
+    message: "Enter keywords."
+  }) // 1,2,3,4,5,
+  console.log(`You entered is ${keywords}`) // ['1','2','3','4','5']
 })
 ```
 

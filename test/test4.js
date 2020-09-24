@@ -12,6 +12,25 @@ runner(async ({ prompt })=>{
     validate: (input)=>["y","n"].includes(input) ? true : "Be sure to enter y or n."
   })
   console.log("yn", yn)
+  
+  const trimList = await prompt({
+    message:`prompt({type:string="list", message:string})`,
+    type:"list",
+  })
+  console.log("trimList", trimList)
+
+  const trimSep = await prompt({
+    message:`prompt({type:string="list", separator:string="|"})`,
+    type:"list",
+    separator:"|",
+  })
+
+  const noTrimList = await prompt({
+    message:`prompt({type:string="list", message:string, noTrim:true })`,
+    type:"list",
+    noTrim: true,
+  })
+  console.log("noTrimList", noTrimList)
 })
 .then(()=>{
   // finally block
