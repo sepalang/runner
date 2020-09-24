@@ -1,6 +1,6 @@
 {
   "name": "@sepalang/runner",
-  "version": "0.12.4",
+  "version": "0.12.5",
   "description": "It was created to make child processes easier.",
   "main": "dist/index.js",
   "engines": {

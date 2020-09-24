@@ -95,7 +95,7 @@ module.exports = function ({ fileDir, processDir }){
         type : promptParams.type,
         name : promptParams.name,
         message : promptParams.message,
-        initial : true,
+        initial : typeof promptParams.initial === "boolean" ? promptParams.initial : true,
         active: 'Y',
         inactive: 'N',
       },
@@ -121,6 +121,7 @@ module.exports = function ({ fileDir, processDir }){
         name : promptParams.name,
         message : promptParams.message,
         separator : promptParams.separator,
+        initial : promptParams.initial,
         validate : (input)=>{
           if(typeof promptParams.validate === "function"){
             if(promptParams.type === "list"){
@@ -160,7 +161,8 @@ module.exports = function ({ fileDir, processDir }){
         type : promptParams.type,
         name : promptParams.name,
         message : promptParams.message,
-        choices : promptParams.choices
+        choices : promptParams.choices,
+        initial : promptParams.initial,
       },
       {
         onSubmit: ()=>{
