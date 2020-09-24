@@ -12,6 +12,10 @@ npm install @sepalang/runner
 ```
 
 Then write an async await function to execute sequentially.
+
+
+#### block run
+
 ```js
 const runner = require("@sepalang/runner"); //or import runner form "runner";
 
@@ -36,7 +40,10 @@ runner(async ({ run })=>{
   console.log(stdout); // [ '.\n..\ntest-vim.js\ntest1.js\ntest2.js\ntest3.js' ]
   
 })
+```
 
+#### block utils
+```js
 // Provides frequently used parameters when executing a process.
 runner(async ({ pwd, cwd, fwd, timeoutPromise })=>{
 
@@ -51,20 +58,33 @@ runner(async ({ pwd, cwd, fwd, timeoutPromise })=>{
   },3000);
 
 })
+```
 
-// Provide input.
-runner(async ({ prompt, select })=>{
+#### confirm
+runner(async ({ confirm })=>{
+  const isOk = await confirm("Are you sure?")
+});
+
+#### prompt
+```js
+runner(async ({ prompt })=>{
   //prompt
   const anyKey = await prompt("Please enter any key")
-  echo(`You entered is '${anyKey}'.`)
+  console.log(`You entered is '${anyKey}'.`)
   
   const yn = await prompt({
     message: "Please enter y or n.",
     validate: (input)=>["y","n"].includes(input) ? true : "Be sure to enter y or n."
   })
-  echo(`You entered is ${yn}`)
+  console.log(`You entered is ${yn}`)
+})
+```
 
+#### select
 
+```js
+// Provide input.
+runner(async ({ select })=>{
   //select
   const options = [
     {label:"foo", value:"SELECTED_FOO", description: "I'm FOO"},
@@ -83,8 +103,11 @@ runner(async ({ prompt, select })=>{
     options,
   })
   console.log("selectMultiple", selectMultiple) // ['SELECTED_FOO', 'SELECTED_BAR']
-
 })
+```
+
+#### inline run
+```js
 
 // Load parameters outside the block
 async function asyncBlock(){
@@ -92,6 +115,10 @@ async function asyncBlock(){
   await run("pwd");
 }
 
+```
+
+#### with process
+```js
 // Works as a Promise Base.
 runner(()=>{})
 .then(()=>{
