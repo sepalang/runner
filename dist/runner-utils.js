@@ -123,15 +123,17 @@ module.exports = function ({ fileDir, processDir }){
         separator : promptParams.separator,
         initial : promptParams.initial,
         validate : (input)=>{
-          if(typeof promptParams.validate === "function"){
-            if(promptParams.type === "list"){
-              return noTrim === false ? promptParams.validate(input.filter((value)=>(value.trim() !== ""))) : promptParams.validate(input) 
-            } else {
-              return (noTrim === false && typeof input === "string") ? promptParams.validate(input.trim()) : promptParams.validate(input)
-            }
-          } else {
+          if(typeof promptParams.validate !== "function"){
             return true
           }
+          if(promptParams.type === "list"){
+            const arrayInput = input.split(promptParams.separator)
+            if(noTrim === false){
+              promptParams.validate(arrayInput.filter((value)=>(value.trim() !== "")))
+            }
+            return promptParams.validate(arrayInput) 
+          }
+          return (noTrim === false && typeof input === "string") ? promptParams.validate(input.trim()) : promptParams.validate(input)
         },
       },
       {
