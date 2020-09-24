@@ -81,8 +81,32 @@ module.exports = function ({ fileDir, processDir }){
     return promptParams
   }
 
-  const prompt = async (option)=>{
+  const confirm = async (option)=>{
+    const promptParams = basePromptConfig(option, { baseType:"toggle" })
 
+    const { result } = await promptsUtil(
+      {
+        type : promptParams.type,
+        name : promptParams.name,
+        message : promptParams.message,
+        initial : true,
+        active: 'Y',
+        inactive: 'N',
+      },
+      {
+        onSubmit: ()=>{
+          //TDDO option:{on:{submit}}
+        },
+        onCancel: ()=>{
+          process.exit(1)
+        }
+      }
+    )
+
+    return result
+  }
+
+  const prompt = async (option)=>{
     const promptParams = basePromptConfig(option, { baseType:"text" })
     const noTrim = option.noTrim === true
     const { result } = await promptsUtil(
@@ -134,6 +158,7 @@ module.exports = function ({ fileDir, processDir }){
   
   return { 
     timeoutPromise, 
+    confirm,
     prompt,
     select,
     path,
