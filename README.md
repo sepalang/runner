@@ -145,3 +145,9 @@ runner(()=>{})
 runner npm start
 runner ./other/cwd/path npm start
 ```
+
+
+### Updated
+
+#### 0.13.0
+- The stdout of the capture option was truncated in versions 0.12.x and below. This bug has been fixed.

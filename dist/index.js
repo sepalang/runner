@@ -3,7 +3,7 @@ const npmPath = require("npm-path")
 const pkgDir = require('pkg-dir')
 const { Transform } = require('stream')
 
-const run = function run (commands, options){
+const run = function run (commands, config){
   
   const argvs    = Array.isArray(commands) ? commands : commands.trim().split(/\s/)
   const unixLike = process.platform !== 'win32'
@@ -20,59 +20,82 @@ const run = function run (commands, options){
     
     const execute = argvs.shift()
     
-    if(typeof options === "object"){
-      if(options.env){
-        const level2Opt = options
-        const level3Opt = { env: Object.assign(process.env, options.env) }
-        options = {
+    if(typeof config === "object"){
+      if(config.env){
+        const level2Opt = config
+        const level3Opt = { env: Object.assign(process.env, config.env) }
+        config = {
           env    : process.env,
           capture: false,
+          silent: false,
           ...level2Opt,
           ...level3Opt
         }
       }
-    } else if(typeof options === "string"){
-      options = {
-        cwd    : options,
+    } else if(typeof config === "string"){
+      config = {
+        cwd    : config,
         env    : process.env,
-        capture: false
+        capture: false,
+        silent: false,
       }
     } else {
-      options = {
+      config = {
         env    : process.env,
-        capture: false
+        capture: false,
+        silent: false,
       }
     }
     
-    const captureMode = options.capture === true
-    npmPath(options)
+    const captureMode = config.capture === true
+    npmPath(config)
     
     let stdoutOutput = null
     let stderrOutput = null
     let stdoutCaptureStream = null
     let stderrCaptureStream = null
     
-    
-    let outevt = (data)=>{
-      const content = data.toString().replace(/\n$/, '')
-      stdoutOutput.push(content)
+    let handleCaptureOut = (data)=>{
+      const content = data.toString()
+      content.split("\n").forEach((chars, index)=>{
+        if(index === 0){
+          if(stdoutOutput.length === 0){
+            stdoutOutput.push(chars)
+          } else {
+            stdoutOutput[stdoutOutput.length - 1] += chars
+          }
+        } else {
+          stdoutOutput.push(chars)
+        }
+      })
     }
     
-    let errevt = (data)=>{
-      const content = data.toString().replace(/\n$/, '')
-      stderrOutput.push(content)
+    let handleCaptureErr = (data)=>{
+      const content = data.toString()
+      content.split("\n").forEach((chars, index)=>{
+        console.log("chars", chars)
+        if(index === 0){
+          if(stderrOutput.length === 0){
+            stderrOutput.push(chars)
+          } else {
+            stderrOutput[stderrOutput.length - 1] += chars
+          }
+        } else {
+          stderrOutput.push(chars)
+        }
+      })
     }
     
     if(captureMode){
       stdoutOutput = []
       stderrOutput = []
-      options.stdio = [
+      config.stdio = [
         process.stdin,
         null,
         null
       ]
     } else {
-      options.stdio = [
+      config.stdio = [
         process.stdin,
         process.stdout,
         process.stderr
@@ -81,25 +104,33 @@ const run = function run (commands, options){
     
     const [shOpt, ...shRun] = argvs
     const shOptRun          = [shOpt, `${shRun.join(' ')}`]
-    const application = spawn(execute, shOptRun, options)
+    const application       = spawn(execute, shOptRun, config)
     
     if(captureMode){
       stdoutCaptureStream = new Transform({
         // eslint-disable-next-line no-unused-vars
         transform (chunk, encoding, callback){
-          outevt(chunk)
+          handleCaptureOut(chunk)
           this.push(chunk)
+          callback()
         }
       })
       stderrCaptureStream = new Transform({
         // eslint-disable-next-line no-unused-vars
         transform (chunk, encoding, callback){
-          errevt(chunk)
+          handleCaptureErr(chunk)
           this.push(chunk)
+          callback()
         }
       })
-      application.stdout.pipe(stdoutCaptureStream).pipe(process.stdout)
-      application.stderr.pipe(stderrCaptureStream).pipe(process.stderr)
+
+      const capturePipeOut = application.stdout.pipe(stdoutCaptureStream)
+      const capturePipeErr = application.stderr.pipe(stderrCaptureStream)
+
+      if(config.silent === false){
+        capturePipeOut.pipe(process.stdout)
+        capturePipeErr.pipe(process.stderr)
+      }
     }
     
     application.on('exit', ()=>{
@@ -111,7 +142,11 @@ const run = function run (commands, options){
         stdoutCaptureStream.close && stdoutCaptureStream.close()
         stderrCaptureStream.close && stderrCaptureStream.close()
       }
-      
+
+      // Remove useless last cursor
+      stdoutOutput[stdoutOutput.length - 1] === '' && stdoutOutput.pop();
+      stderrOutput[stderrOutput.length - 1] === '' && stderrOutput.pop();
+
       if(code === 0){
         resolve({ code, stdout: stdoutOutput, stderr: stderrOutput })
       } else {
@@ -135,9 +170,9 @@ function runner(asyncFn){
     // eslint-disable-next-line no-unused-vars, handle-callback-err
     npmPath(async (err, npmPath)=>{
       const pacakgePath = await pkgDir(processDir)
-      const baseOptions = { run, npmPath, pacakgePath }
+      const baseconfig = { run, npmPath, pacakgePath }
       const runnerUtils = require("./runner-utils")({ fileDir, processDir })
-      const runnerParams = { ...baseOptions, ...runnerUtils }
+      const runnerParams = { ...baseconfig, ...runnerUtils }
       resolve(typeof asyncFn === "function" ? asyncFn(runnerParams) : runnerParams)
     })
   }))
