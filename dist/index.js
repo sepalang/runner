@@ -48,6 +48,7 @@ const run = function run (commands, config){
     }
     
     const captureMode = config.capture === true
+    const silentMode = config.silent === true
     npmPath(config)
     
     let stdoutOutput = null
@@ -73,7 +74,6 @@ const run = function run (commands, config){
     let handleCaptureErr = (data)=>{
       const content = data.toString()
       content.split("\n").forEach((chars, index)=>{
-        console.log("chars", chars)
         if(index === 0){
           if(stderrOutput.length === 0){
             stderrOutput.push(chars)
@@ -127,7 +127,7 @@ const run = function run (commands, config){
       const capturePipeOut = application.stdout.pipe(stdoutCaptureStream)
       const capturePipeErr = application.stderr.pipe(stderrCaptureStream)
 
-      if(config.silent === false){
+      if(silentMode !== true){
         capturePipeOut.pipe(process.stdout)
         capturePipeErr.pipe(process.stderr)
       }
@@ -144,8 +144,8 @@ const run = function run (commands, config){
       }
 
       // Remove useless last cursor
-      stdoutOutput[stdoutOutput.length - 1] === '' && stdoutOutput.pop();
-      stderrOutput[stderrOutput.length - 1] === '' && stderrOutput.pop();
+      stdoutOutput && stdoutOutput[stdoutOutput.length - 1] === '' && stdoutOutput.pop();
+      stderrOutput && stderrOutput[stderrOutput.length - 1] === '' && stderrOutput.pop();
 
       if(code === 0){
         resolve({ code, stdout: stdoutOutput, stderr: stderrOutput })

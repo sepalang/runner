@@ -23,8 +23,9 @@ const runner = require("@sepalang/runner"); //or import runner form "runner";
 runner(async ({ run })=>{
 
   // Sequential execution using await
-  await run("pwd"); // /Users/user/runner/test
-  
+  await run("pwd");
+  // /Users/user/runner/test
+
   // Can run vim.
   await run("vim");
   
@@ -33,11 +34,12 @@ runner(async ({ run })=>{
   
 
   let stdout;
-  ({ stdout } = await run("pwd",{ capture:true }));
-  console.log(stdout); // ['/Users/user/runner/test']
-  
-  ({ stdout } = await run("ls -a",{ capture:true }));
-  console.log(stdout); // [ '.\n..\ntest-vim.js\ntest1.js\ntest2.js\ntest3.js' ]
+  const { stdout } = await run("pwd",{ capture:true }));
+  // /Users/user/runner/test
+  console.log({stdout}) // {stdout:['/Users/user/runner/test']}
+
+  ({ stdout } = await run("ls -a",{ capture:true, silent:true }));
+  console.log(stdout); // [ 'test-vim.js','ntest1.js','test3.js' ]
   
 })
 ```
@@ -149,5 +151,8 @@ runner ./other/cwd/path npm start
 
 ### Updated
 
+#### 0.13.1
+- Fixed a problem in which the `silent` option did not work properly.
+
 #### 0.13.0
-- The stdout of the capture option was truncated in versions 0.12.x and below. This bug has been fixed.
+- The stdout of the `capture` option was truncated in versions `0.12.x` and below. This bug has been fixed.
